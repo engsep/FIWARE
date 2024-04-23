@@ -209,11 +209,11 @@ services:
   # ==============
 
   # Context Provider, Custom IoT Agent, Demo & Open API (Swagger)
-  node-red:
+  context:
     image: nodered/node-red:latest-18 #:3.1.7
-  # build: node-red
-    hostname: ${HOSTNAME:-node-red}
-    container_name: node-red
+    build: context
+    hostname: ${HOSTNAME:-context}
+    container_name: context
     depends_on:
      - keyrock
      - orion-v2-proxy
@@ -229,8 +229,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-    # - node-red-data:/data
-      - ./node-red/data:/data
+      - context-data:/data
       - /home:/home
 
   # NGINX Reverse Proxy and Web Server for NGSI-LD @context files
@@ -239,7 +238,7 @@ services:
     hostname: web-server
     container_name: nginx
     depends_on:
-      - node-red
+      - swagger
     restart: always
     networks:
       default:
@@ -329,10 +328,10 @@ services:
 # # docker exec -it mosquitto mosquitto_pub -h mosquitto -m "Hello world!" -t "/test"
 
 volumes:
+  context-data: ~
   ganache-db: ~
 # mongo-config: ~
   mongo-db: ~
 # mosquitto-data:
 # mosquitto-log:
   mysql-db: ~
-# node-red-data:
